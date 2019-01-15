@@ -114,11 +114,11 @@ var libraryStubData = {
                 }
             },
             ComplianceService: {
-                isPrivacyEnabled: function() {
+                isPrivacyEnabled: function () {
                     return true;
                 },
                 gdpr: {
-                    getConsent: function() {
+                    getConsent: function () {
                         return {
                             applies: true,
                             consentString: 'BOQ7WlgOQ7WlgABABwAAABJOACgACAAQABA'
@@ -135,7 +135,7 @@ var libraryStubData = {
         documentWrite: function (doc, adm) {
             return adm;
         },
-        now: function() {
+        now: function () {
             return (new Date()).getTime();
         }
     },

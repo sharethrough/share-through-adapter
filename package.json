@@ -4,7 +4,8 @@
   "description": "a complete self-serve partner development package for the header tag wrapper",
   "main": "share-through-htb.js",
   "scripts": {
-    "test": "jasmine"
+    "test": "jasmine",
+    "debug": "node ./node_modules/adapter-development-suite/bin/index.js"
   },
   "repository": {
     "type": "git",
@@ -13,6 +14,7 @@
   "author": "Index Exchange",
   "license": "UNLICENSED",
   "devDependencies": {
+    "adapter-development-suite": "git+https://github.com/indexexchange/adapter-development-suite.git",
     "mock-browser": "^0.92.14"
   },
   "dependencies": {

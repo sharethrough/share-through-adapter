@@ -86,18 +86,24 @@ function ShareThroughHtb(configs) {
         var baseUrl = Browser.getProtocol() + '//btlr.sharethrough.com/header-bid/v1';
 
         var queryObj = {
-          placement_key: returnParcels[0].xSlotRef.placementKey,
-          bidId: returnParcels[0].requestId,
-          hbSource: 'indexExchange',
-          hbVersion: '2.1.1',
-          cbust: System.now()
+            placement_key: returnParcels[0].xSlotRef.placementKey,
+            bidId: returnParcels[0].requestId,
+            instant_play_capable: __canAutoPlayHTML5Video(),
+            hbSource: "indexExchange",
+            hbVersion: "2.1.1",
+            cbust: System.now()
         };
+
+        var unifiedID = __getUnifiedID(returnParcels);
+        if (unifiedID) {
+            queryObj.ttduid = unifiedID;
+        }
 
         var privacyEnabled = ComplianceService.isPrivacyEnabled();
         var gdprStatus = ComplianceService.gdpr.getConsent();
         if (privacyEnabled && gdprStatus) {
-          queryObj.consent_required = gdprStatus.applies;
-          queryObj.consent_string = gdprStatus.consentString;
+            queryObj.consent_required = gdprStatus.applies;
+            queryObj.consent_string = gdprStatus.consentString;
         }
 
         return {
@@ -109,18 +115,57 @@ function ShareThroughHtb(configs) {
     /* Helpers
      * ---------------------------------- */
 
+    function __getUnifiedID(returnParcels) {
+        var uids = []
+        try {
+            uids = returnParcels[0].identityData.AdserverOrgIp.data.uids;
+        } catch (err) {
+            return null;
+        }
+
+        var unifiedID;
+        for (var i = 0; i < uids.length; i++) {
+            if (uids[i].ext.rtiPartner === "TDID") {
+                unifiedID = uids[i].id;
+                break;
+            }
+        };
+        return unifiedID;
+    }
+
+    function __canAutoPlayHTML5Video() {
+        var userAgent = Browser.getUserAgent();
+        if (!userAgent) return false;
+
+        var isAndroid = /Android/i.test(userAgent);
+        var isiOS = /iPhone|iPad|iPod/i.test(userAgent);
+        var chromeVersion = parseInt((/Chrome\/([0-9]+)/.exec(userAgent) || [0, 0])[1]);
+        var chromeiOSVersion = parseInt((/CriOS\/([0-9]+)/.exec(userAgent) || [0, 0])[1]);
+        var safariVersion = parseInt((/Version\/([0-9]+)/.exec(userAgent) || [0, 0])[1]);
+
+        if (
+            (isAndroid && chromeVersion >= 53) ||
+            (isiOS && (safariVersion >= 10 || chromeiOSVersion >= 53)) ||
+            !(isAndroid || isiOS)
+        ) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
     /* =============================================================================
      * STEP 5  | Rendering Pixel
      * -----------------------------------------------------------------------------
      *
-    */
+     */
 
-     /**
+    /**
      * This function will render the pixel given.
      * @param  {string} pixelUrl Tracking pixel img url.
      */
     function __renderPixel(pixelUrl) {
-        if (pixelUrl){
+        if (pixelUrl) {
             Network.img({
                 url: decodeURIComponent(pixelUrl),
                 method: 'GET',
@@ -133,23 +178,23 @@ function ShareThroughHtb(configs) {
         var encodedBid = __b64EncodeUnicode(JSON.stringify(bid));
 
         return "<div data-str-native-key='" + placementKey + "' data-stx-response-name='" + stxResponseName + "' data-str-replace-iframe-container='true'></div>" +
-        "<script>var " + stxResponseName + " = '" + encodedBid + "' </script>" +
-        "<script src='//native.sharethrough.com/assets/sfp-set-targeting.js'></script>" +
-        "<script type='text/javascript'>" +
-        "(function() {" +
+            "<script>var " + stxResponseName + " = '" + encodedBid + "' </script>" +
+            "<script src='//native.sharethrough.com/assets/sfp-set-targeting.js'></script>" +
+            "<script type='text/javascript'>" +
+            "(function() {" +
             "var sfp_js = document.createElement('script');" +
             "sfp_js.src = '//native.sharethrough.com/assets/sfp.js';" +
             "sfp_js.type = 'text/javascript';" +
             "sfp_js.charset = 'utf-8';" +
             "try {" +
-                "if (!(window.top.STR && window.top.STR.Tag)) {" +
-                    "window.top.document.getElementsByTagName('body')[0].appendChild(sfp_js);" +
-                "}" +
-            "} catch (e) {" +
-              "console.log(e);" +
+            "if (!(window.top.STR && window.top.STR.Tag)) {" +
+            "window.top.document.getElementsByTagName('body')[0].appendChild(sfp_js);" +
             "}" +
-         "})();" +
-        "</script>";
+            "} catch (e) {" +
+            "console.log(e);" +
+            "}" +
+            "})();" +
+            "</script>";
     }
 
     // See https://developer.mozilla.org/en-US/docs/Web/API/WindowBase64/Base64_encoding_and_decoding#The_Unicode_Problem
