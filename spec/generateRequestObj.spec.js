@@ -44,7 +44,8 @@ function generateReturnParcels(profile, partnerConfig) {
                     htSlot: htSlot,
                     ref: "",
                     xSlotRef: partnerConfig.xSlots[xSlotName],
-                    requestId: '_' + Date.now()
+                    requestId: '_' + Date.now(),
+                    identityData: partnerConfig.identityData
                 });
             }
         }
@@ -124,7 +125,7 @@ describe('generateRequestObj', function () {
         });
         /* -----------------------------------------------------------------------*/
 
-    /* ---------- IF MRA, generate a single request for each parcel ---------- */
+        /* ---------- IF MRA, generate a single request for each parcel ---------- */
     } else {
         for (var i = 0; i < returnParcels.length; i++) {
             requestObject = partnerModule.generateRequestObj([returnParcels[i]]);
@@ -165,11 +166,13 @@ describe('generateRequestObj', function () {
                 expect(requestObject).to.exist;
                 expect(requestObject.data.placement_key).to.eq('abc123');
                 expect(requestObject.data.bidId).to.exist;
+                expect(requestObject.data.instant_play_capable).to.be.true;
+                expect(requestObject.data.ttduid).to.eq('uid123');
                 expect(requestObject.data.hbSource).to.eq('indexExchange');
                 expect(requestObject.data.hbVersion).to.eq('2.1.1');
                 expect(requestObject.data.cbust).to.exist;
-                expect(requestObject.data.consent_required).to.eq(true)
-                expect(requestObject.data.consent_string).to.eq('BOQ7WlgOQ7WlgABABwAAABJOACgACAAQABA')
+                expect(requestObject.data.consent_required).to.eq(true);
+                expect(requestObject.data.consent_string).to.eq('BOQ7WlgOQ7WlgABABwAAABJOACgACAAQABA');
             });
             /* -----------------------------------------------------------------------*/
         }
