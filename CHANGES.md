@@ -1,6 +1,7 @@
-# 2.2.0
+# 2.1.2
 
-- Add parameter for Unified ID in `__generateRequestObj` function of adapter code
+- Add support for Unified ID in `__generateRequestObj` function of adapter code
+- Also adds support for signaling ability of request to support bids requiring HTML5 Video support
 
 # 2.1.1
 
