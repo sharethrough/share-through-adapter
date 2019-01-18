@@ -169,7 +169,7 @@ describe('generateRequestObj', function () {
                 expect(requestObject.data.instant_play_capable).to.be.true;
                 expect(requestObject.data.ttduid).to.eq('uid123');
                 expect(requestObject.data.hbSource).to.eq('indexExchange');
-                expect(requestObject.data.hbVersion).to.eq('2.1.1');
+                expect(requestObject.data.hbVersion).to.eq('2.1.2');
                 expect(requestObject.data.cbust).to.exist;
                 expect(requestObject.data.consent_required).to.eq(true);
                 expect(requestObject.data.consent_string).to.eq('BOQ7WlgOQ7WlgABABwAAABJOACgACAAQABA');
